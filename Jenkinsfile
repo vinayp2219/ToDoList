@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/vinayp2219/ToDoList.git'
+                git branch: 'main', url: 'https://github.com/vinayp2219/ToDoList.git'
             }
         }
 
