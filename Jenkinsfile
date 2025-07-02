@@ -21,11 +21,5 @@ pipeline {
                 // Add test commands here if you use any test framework
             }
         }
-
-        stage('Archive Binary') {
-            steps {
-                archiveArtifacts artifacts: 'todo', fingerprint: true
-            }
-        }
     }
 }
