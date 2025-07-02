@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Compiling C++ program...'
-                sh 'g++ -o todo main.cpp'
+                sh 'g++ ToDoList.cpp -o todo'
             }
         }
 
