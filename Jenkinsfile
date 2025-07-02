@@ -1,16 +1,17 @@
 pipeline {
     agent any
 
-  stage('Clone Repository') {
-    steps {
-        git branch: 'main', url: 'https://github.com/vinayp2219/ToDoList.git'
-    }
-}
-
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/vinayp2219/ToDoList.git'
+            }
+        }
 
         stage('Build') {
             steps {
-                sh 'g++ ToDoList.cpp -o todo' // corrected: compile to an output binary named 'todo'
+                echo 'Building...'
+                // Add your build steps here
             }
         }
 
@@ -23,7 +24,7 @@ pipeline {
 
         stage('Archive Binary') {
             steps {
-                archiveArtifacts artifacts: 'todo', fingerprint: true // archive the compiled binary
+                archiveArtifacts artifacts: 'todo', fingerprint: true
             }
         }
     }
