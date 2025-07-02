@@ -11,14 +11,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Compiling C++ program...'
-                sh 'g++ ToDoList.cpp -o todo'
+                bat 'g++ ToDoList.cpp -o todo'
             }
         }
 
         stage('Run') {
             steps {
                 echo 'Running the C++ program...'
-                sh './todo'
+                bat './todo'
             }
         }
     }
