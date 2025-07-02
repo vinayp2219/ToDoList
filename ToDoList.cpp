@@ -11,8 +11,8 @@ public:
     string description;
     string category;
     bool completed;
-    string dueDate; // TAKEN FROM SYSTEM TODAY();
-    string priority; // LOW MEDIUM HIGH
+    string dueDate;
+    string priority;
     bool reminder;
     string reminderTime;
     int priorityLevel;
@@ -44,12 +44,11 @@ vector<string> categories = {"Work", "Personal", "Study", "Shopping", "Other"};
 
 void displayTasks() {
     if (NotesAdded.empty()) {
-        cout << "Please add some task first to View";
+        cout << "Please add some task first to View\n";
     } else {
         cout << "\nTasks:\n";
         cout << "   " << "Task" << " " << "Category" << " " << "Priority" << " " << "DueDate" << " " << "Status" << " " << "Reminder" << "\n";
 
-        // Sort the tasks based on priority level
         sort(NotesAdded.begin(), NotesAdded.end(), [](const Task& a, const Task& b) {
             return a.priorityLevel > b.priorityLevel;
         });
@@ -66,76 +65,7 @@ void displayTasks() {
     }
 }
 
-void markTaskAsCompleted() {
-    int taskNumber;
-    cin >> taskNumber;
-
-    if (taskNumber >= 0 && taskNumber <= NotesAdded.size()) {
-        NotesAdded[taskNumber - 1].completed = 1;
-    } else {
-        cout << "Invalid Task Number" << "\n";
-    }
-}
-
-void deleteTask() {
-    int taskNumber;
-    cin >> taskNumber;
-
-    if (taskNumber >= 0 && taskNumber <= NotesAdded.size()) {
-        NotesAdded.erase(NotesAdded.begin() + taskNumber - 1);
-    } else {
-        cout << "Invalid Task Number" << "\n";
-    }
-}
-
-void setReminder() {
-    int taskNumber;
-    cin >> taskNumber;
-
-    if (taskNumber >= 0 && taskNumber <= NotesAdded.size()) {
-        cout << "Enter the reminder time (HH:MM): ";
-        cin >> NotesAdded[taskNumber - 1].reminderTime;
-        NotesAdded[taskNumber - 1].reminder = true;
-    } else {
-        cout << "Invalid Task Number" << "\n";
-    }
-}
-
-void filterTaskByCategory() {
-    string categoryToFilter;
-    cout << "Enter the category to filter: ";
-    cin >> categoryToFilter;
-
-    cout << "\nTasks in the " << categoryToFilter << " category:\n";
-    cout << "   " << "Task" << " " << "Category" << " " << "Priority" << " " << "DueDate" << " " << "Status" << " " << "Reminder" << "\n";
-
-    bool foundTasks = false;
-    for (const auto& task : NotesAdded) {
-        if (task.category == categoryToFilter) {
-            foundTasks = true;
-            cout << "- " << task.description << " "
-                 << task.category << " "
-                 << task.priority << " "
-                 << task.dueDate << " "
-                 << (task.completed ? "Completed" : "Pending") << " "
-                 << (task.reminder ? task.reminderTime : "No") << "\n";
-        }
-    }
-
-    if (!foundTasks) {
-        cout << "No tasks found in the " << categoryToFilter << " category." << endl;
-    }
-}
-
-void addtask() {
-    string description;
-    string category;
-    string priority;
-
-    cout << "Enter the Description\n";
-    cin.ignore();
-    getline(cin, description);
-
+void addSampleTask(string description, string category, string priority) {
     auto now = time(nullptr);
     tm* current = localtime(&now);
 
@@ -143,68 +73,56 @@ void addtask() {
     strftime(buffer, sizeof(buffer), "%Y-%m-%d", current);
     string dueDate(buffer);
 
-    cout << "Choose a category: " << endl;
-    for (size_t i = 0; i < categories.size(); ++i) {
-        cout << i + 1 << ". " << categories[i] << endl;
-    }
-
-    int categoryChoice;
-    cin >> categoryChoice;
-    if (categoryChoice > 0 && categoryChoice <= categories.size()) {
-        category = categories[categoryChoice - 1];
-    } else {
-        cout << "Invalid choice, defaulting to 'Other'" << endl;
-        category = "Other";
-    }
-
-    cout << "Enter priority (HIGH/LOW/MEDIUM): ";
-    cin >> priority;
-
     Task task(description, category, priority, dueDate);
     NotesAdded.push_back(task);
 }
 
-void displayMenu() {
+void interactiveMenu() {
     int choice;
     do {
         cout << "\nMenu:\n"
              << "1. Add Task\n"
              << "2. View Task\n"
-             << "3. Mark Task as Completed\n"
-             << "4. Delete Task\n"
-             << "5. Set Reminder\n"
-             << "6. Filter Task By Category\n"
-             << "7. Exit\n"
+             << "3. Exit\n"
              << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
-        case 1:
-            addtask();
-            break;
-        case 2:
-            displayTasks();
-            break;
-        case 3:
-            markTaskAsCompleted();
-            break;
-        case 4:
-            deleteTask();
-            break;
-        case 5:
-            setReminder();
-            break;
-        case 6:
-            filterTaskByCategory();
-            break;
-        case 7:
-            cout << "Goodbye! Please do the tasks on time";
-            break;
+            case 1: {
+                string description, priority;
+                int cat;
+                cout << "Enter description: ";
+                cin.ignore();
+                getline(cin, description);
+                cout << "Choose category:\n";
+                for (int i = 0; i < categories.size(); i++) {
+                    cout << i + 1 << ". " << categories[i] << "\n";
+                }
+                cin >> cat;
+                string category = (cat > 0 && cat <= categories.size()) ? categories[cat - 1] : "Other";
+                cout << "Enter priority (HIGH/MEDIUM/LOW): ";
+                cin >> priority;
+                addSampleTask(description, category, priority);
+                break;
+            }
+            case 2:
+                displayTasks();
+                break;
+            case 3:
+                cout << "Goodbye! Please do the tasks on time\n";
+                break;
         }
-    } while (choice != 7);
+    } while (choice != 3);
 }
 
 int main() {
-    displayMenu();
+#ifdef JENKINS
+    addSampleTask("Finish Jenkins setup", "Work", "HIGH");
+    addSampleTask("Write C++ report", "Study", "MEDIUM");
+    displayTasks();
+    cout << "Automated Jenkins run completed.\n";
+#else
+    interactiveMenu();
+#endif
     return 0;
 }
