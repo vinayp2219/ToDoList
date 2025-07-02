@@ -4,21 +4,21 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/vinayp2219/ToDoList.git'
+                git 'https://github.com/vinayp2219/ToDoList.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building...'
-                // Add your build steps here
+                echo 'Compiling C++ program...'
+                sh 'g++ -o todo main.cpp'
             }
         }
 
-        stage('Test') {
+        stage('Run') {
             steps {
-                echo 'No tests defined yet.'
-                // Add test commands here if you use any test framework
+                echo 'Running the C++ program...'
+                sh './todo'
             }
         }
     }
